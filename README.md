@@ -10,7 +10,5 @@ You also need to install the following libraries:
 
 #### Ubuntu
   sudo apt-get install cmake
-
   sudo apt-get install libglfw3-dev
-
   sudo apt-get install libglew-dev
