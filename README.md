@@ -1,37 +1,32 @@
 # s3tc_test
+Simple test program to test GL_EXT_TEXTURE_COMPRESSION_S3TC features
+
 ## Prerequisite
-
-You need to install cmake at least at version 3.1 as build system.
-You also need to install the following libraries:
-  * glfw3
+  * cmake at least at versione 3.1
+  * c++14 conformant compiler (GCC 5: used features: make_unique and uniform initalization)
   * glew
+  * glfw3
 
-### Linux  
+### Ubuntu 16.04  
   * sudo apt-get install cmake
+  * sudo apt-get install libglfw-dev
   * sudo apt-get install libglew-dev
 
-### Ubuntu 14.04 and above
-  GLFW3 unfortunately it's not present in default repository. Follow these istrucionts:
+#### Note for Ubuntu 14.04 and below
+  GLFW3 unfortunately it's not present in default repository. Follow these instructions:
 
-  sudo add-apt-repository ppa:keithw/glfw3
+  * sudo add-apt-repository ppa:keithw/glfw3
+  * sudo apt-get update
+  * sudo apt-get install libglfw3-dev
 
-  sudo apt-get update
-  
-  sudo apt-get install libglfw3-dev
+  The default cmake version is 2.8 so you have to download a newer version from cmake website
 
-### Ubuntu 16.04
-  sudo apt-get install libglfw-dev
 
 ## Build
 ### Linux
-  git clone https://github.com/edukaj/s3tc_test.git
-
-  cd s3tc_test
-
-  mkdir build
-
-  cd build
-
-  cmake ..
-
-  make
+  * git clone https://github.com/edukaj/s3tc_test.git
+  * cd s3tc_test
+  * mkdir build
+  * cd build
+  * cmake ..
+  * make
