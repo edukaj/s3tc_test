@@ -14,7 +14,9 @@ You also need to install the following libraries:
   GLFW3 unfortunately it's not present in default repository. Follow these istrucionts:
 
   sudo add-apt-repository ppa:keithw/glfw3
+
   sudo apt-get update
+  
   sudo apt-get install libglfw3-dev
 
 ### Ubuntu 16.04
