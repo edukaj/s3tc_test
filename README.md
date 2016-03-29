@@ -13,14 +13,13 @@ Simple test program to test GL_EXT_TEXTURE_COMPRESSION_S3TC features
   * sudo apt-get install libglew-dev
 
 #### Note for Ubuntu 14.04 and below
-  GLFW3 unfortunately it's not present in default repository. Follow these instructions:
+GLFW3 unfortunately it's not present in default repository. Follow these instructions:
 
   * sudo add-apt-repository ppa:keithw/glfw3
   * sudo apt-get update
   * sudo apt-get install libglfw3-dev
 
-  The default cmake version is 2.8 so you have to download a newer version from cmake website
-
+The default cmake version is 2.8 so you have to download a newer version from cmake website
 
 ## Build
 ### Linux
