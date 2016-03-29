@@ -20,10 +20,10 @@ Technique::~Technique()
 void Technique::addShaderProgram(GLenum type, const string &filename)
 {
 	GLint shaderID = glCreateShader (type);
-    const auto shaderSource = getTextFromFile(filename);
-    const GLchar* data = shaderSource.c_str();
+	const auto shaderSource = getTextFromFile(filename);
+	const GLchar* data = shaderSource.c_str();
 
-    glShaderSource (shaderID, 1, &data, nullptr);
+	glShaderSource (shaderID, 1, &data, nullptr);
 	glCompileShader (shaderID);
 
 	GLint isCompiled = 0;
@@ -37,10 +37,10 @@ void Technique::addShaderProgram(GLenum type, const string &filename)
 		string errorLog(maxLength, ' ');
 		glGetShaderInfoLog(shaderID, maxLength, &maxLength, &errorLog[0]);
 
-        ostringstream os;
-        os << "Unable to build " << filename << '\n'
-           << errorLog << "\nShader source:\n" << shaderSource;
-        throw runtime_error(os.str());
+		ostringstream os;
+		os << "Unable to build " << filename << '\n'
+		   << errorLog << "\nShader source:\n" << shaderSource;
+		throw runtime_error(os.str());
 	}
 
 	mShaders.push_back(shaderID);
@@ -63,10 +63,10 @@ void Technique::finalize()
 		string infoLog(maxLength, ' ');
 		glGetProgramInfoLog(mProgramID, maxLength, &maxLength, &infoLog[0]);
 
-        ostringstream os;
-        os << "Unable to link program:\n" << infoLog;
+		ostringstream os;
+		os << "Unable to link program:\n" << infoLog;
 
-        throw runtime_error(os.str());
+		throw runtime_error(os.str());
 	}
 
 	glValidateProgram(mProgramID);
@@ -79,10 +79,10 @@ void Technique::finalize()
 		string infoLog(maxLength, ' ');
 		glGetProgramInfoLog(mProgramID, maxLength, &maxLength, &infoLog[0]);
 
-        ostringstream os;
-        os << "Unable to validate program:\n" << infoLog;
+		ostringstream os;
+		os << "Unable to validate program:\n" << infoLog;
 
-        throw runtime_error(os.str());
+		throw runtime_error(os.str());
 	}
 
 	deleteShaders();
@@ -90,12 +90,12 @@ void Technique::finalize()
 
 void Technique::enable()
 {
-    glUseProgram(mProgramID);
+	glUseProgram(mProgramID);
 }
 
 void Technique::disable()
 {
-    glUseProgram(0);
+	glUseProgram(0);
 }
 
 GLint Technique::getUniformLocation(const string &uniformName)
@@ -103,11 +103,11 @@ GLint Technique::getUniformLocation(const string &uniformName)
 	GLint location = glGetUniformLocation(mProgramID, uniformName.c_str());
 
 	if(location == -1)
-    {
-        ostringstream os;
-        os << "Unable to locate:" << uniformName << " uniform location";
-        throw runtime_error(os.str());
-    }
+	{
+		ostringstream os;
+		os << "Unable to locate:" << uniformName << " uniform location";
+		throw runtime_error(os.str());
+	}
 	return location;
 }
 
@@ -134,11 +134,11 @@ string Technique::getTextFromFile(const string &filename)
 	ifstream file(filename);
 
 	if(!file)
-    {
-        ostringstream os;
-        os << "Unable to open shader " << filename;
-        throw runtime_error(os.str());
-    }
+	{
+		ostringstream os;
+		os << "Unable to open shader " << filename;
+		throw runtime_error(os.str());
+	}
 
 	ostringstream ss;
 	ss << file.rdbuf();

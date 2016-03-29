@@ -6,7 +6,6 @@
 #include <iostream>
 #include <sstream>
 #include <memory>
-
 using namespace std;
 
 void key_callback(GLFWwindow* window, int key, int, int action, int);
@@ -25,25 +24,24 @@ int g_Height = 720;
 const std::string g_ResourcePath = "./";
 
 GLFWwindow* initializeWindow(int width = 1280, int height = 720, bool fullscreen = false,
-                             int glMajorVersione = 3, 
-                             int glMinorVersion = 3)
+							 int glMajorVersione = 3,
+							 int glMinorVersion = 3)
 {
 	g_Width = width;
 	g_Height = height;
+
 	if(!glfwInit())
 		throw std::runtime_error{"unable to initalize glfw"};
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glMajorVersione);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glMajorVersione);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glMinorVersion);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	auto window = glfwCreateWindow(g_Width, g_Height, "test", (fullscreen ? glfwGetPrimaryMonitor() : nullptr), nullptr);
 
 	if (window == nullptr)
-	{
 		throw std::runtime_error{"unable to create window"};
-	}
 
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetWindowSizeCallback(window, resize_callback);
@@ -67,15 +65,15 @@ void initalizeOpenGL()
 	os << "Renderer: " << glGetString (GL_RENDERER) << '\n'
 	   << "OpenGL Version: " << glGetString (GL_VERSION) << '\n'
 	   << "Max texture size is: " << maxTextureSize << 'x' << maxTextureSize
- 	   << endl;
+	   << endl;
 
 	cout << os.str() << endl;
 
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	g_Technique = make_unique<Technique>();
-    g_Technique->addShaderProgram(GL_VERTEX_SHADER, g_ResourcePath + string{"resources/vertexshader.glsl"});
-    g_Technique->addShaderProgram(GL_FRAGMENT_SHADER, g_ResourcePath + string{"resources/fragmentshader.glsl"});
+	g_Technique->addShaderProgram(GL_VERTEX_SHADER, g_ResourcePath + string{"resources/vertexshader.glsl"});
+	g_Technique->addShaderProgram(GL_FRAGMENT_SHADER, g_ResourcePath + string{"resources/fragmentshader.glsl"});
 	g_Technique->finalize();
 	g_Technique->enable();
 
@@ -84,7 +82,7 @@ void initalizeOpenGL()
 	g_Technique->setVertexLocation("textureUVCoordinates", 1);
 
 	g_Technique->setUniform(
-	g_Technique->getUniformLocation("myTexture"), 0);
+				g_Technique->getUniformLocation("myTexture"), 0);
 }
 
 
@@ -103,8 +101,8 @@ void resize_callback(GLFWwindow*, int width, int height)
 
 struct MeshVertex
 {
-    glm::vec2 position;
-    glm::vec2 textCoord;
+	glm::vec2 position;
+	glm::vec2 textCoord;
 };
 
 void createVAO()
@@ -138,42 +136,42 @@ void createVAO()
 
 void drawTexture()
 {
-    g_Texture->enable(GL_TEXTURE0);
+	g_Texture->enable(GL_TEXTURE0);
 
-    g_Technique->enable();
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-    g_Technique->disable();
+	g_Technique->enable();
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	g_Technique->disable();
 }
 
 void draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glBindVertexArray(g_VAO);
-    drawTexture();
+	drawTexture();
 }
 
 void createTexture(const string imageFilename)
 {
-    g_Texture = make_unique<Texture>(imageFilename);
+	g_Texture = make_unique<Texture>(imageFilename);
 }
 
 int main(int argc, char* argv[])
 {
-    const string imageFilename = argc == 1 ?
-                g_ResourcePath + string{"resources/mf_monster_minions.dds"} : argv[1];
+	const string imageFilename = argc == 1 ?
+				g_ResourcePath + string{"resources/mf_monster_minions.dds"} : argv[1];
 
 	try
 	{
 		auto window = initializeWindow();
 		initalizeOpenGL();
 		createVAO();
-        createTexture(imageFilename);
+		createTexture(imageFilename);
 
 		while (!glfwWindowShouldClose(window))
 		{
 			draw();
 			glfwSwapBuffers(window);
-            glfwPollEvents();
+			glfwPollEvents();
 		}
 
 		glfwDestroyWindow(window);

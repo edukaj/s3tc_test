@@ -8,7 +8,7 @@ class Texture
 {
 public:
 	Texture(const std::string& filename);
-        ~Texture();
+	~Texture();
 
 	void enable(GLenum TextureUnit);
 	void disable(GLenum TextureUnit);
