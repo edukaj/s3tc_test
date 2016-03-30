@@ -153,9 +153,6 @@ Texture::Texture(const std::string& filename)
 			Format.Swizzles[3] != GL_ALPHA)
 		throw runtime_error{"Invalid swizzles format texture"};
 
-	if (Format.Internal != GL_COMPRESSED_RGBA_S3TC_DXT3_EXT)
-		throw runtime_error{"Only GL_COMPRESSED_RGBA_S3TC_DXT5_EXT compression supported!"};
-
 	glGenTextures(1, &mTexture);
 	glBindTexture(GL_TEXTURE_2D, mTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
@@ -167,18 +164,52 @@ Texture::Texture(const std::string& filename)
 
 	glm::tvec3<GLsizei> const Extent(Texture.extent());
 
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, Extent.x, Extent.y);
+	switch (Format.Internal) {
+	case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+		glTexStorage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, Extent.x, Extent.y);
+		glCompressedTexSubImage2D(
+					GL_TEXTURE_2D,
+					0u,
+					0, 0,
+					Extent.x,
+					Extent.y,
+					GL_COMPRESSED_RGBA_S3TC_DXT3_EXT,
+					static_cast<GLsizei>(Texture.size()),
+					Texture.data()
+					);
+		break;
+	case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+		glTexStorage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, Extent.x, Extent.y);
+		glCompressedTexSubImage2D(
+					GL_TEXTURE_2D,
+					0u,
+					0, 0,
+					Extent.x,
+					Extent.y,
+					GL_COMPRESSED_RGBA_S3TC_DXT3_EXT,
+					static_cast<GLsizei>(Texture.size()),
+					Texture.data()
+					);
+		break;
+	case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+		glTexStorage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, Extent.x, Extent.y);
+		glCompressedTexSubImage2D(
+					GL_TEXTURE_2D,
+					0u,
+					0, 0,
+					Extent.x,
+					Extent.y,
+					GL_COMPRESSED_RGBA_S3TC_DXT3_EXT,
+					static_cast<GLsizei>(Texture.size()),
+					Texture.data()
+					);
+		break;
 
-	glCompressedTexSubImage2D(
-				GL_TEXTURE_2D,
-				0u,
-				0, 0,
-				Extent.x,
-				Extent.y,
-				GL_COMPRESSED_RGBA_S3TC_DXT3_EXT,
-				static_cast<GLsizei>(Texture.size()),
-				Texture.data()
-				);
+
+	default:
+		throw runtime_error{"Unsupported texture format"};
+	}
+
 
 #endif
 }

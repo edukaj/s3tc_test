@@ -200,7 +200,7 @@ void createTexture(const string imageFilename)
 int main(int argc, char* argv[])
 {
 	const string imageFilename = argc == 1 ?
-				g_ResourcePath + string{"resources/mf_monster_minions.dds"} : argv[1];
+				g_ResourcePath + string{"resources/mf_monster_minions.dds"} : string{argv[1]};
 
 	try
 	{
