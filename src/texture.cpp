@@ -166,6 +166,7 @@ Texture::Texture(const std::string& filename)
 
 	switch (Format.Internal) {
 	case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+		cout << "Texture compression is GL_COMPRESSED_RGBA_S3TC_DXT1_EXT " << endl;
 		glTexStorage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, Extent.x, Extent.y);
 		glCompressedTexSubImage2D(
 					GL_TEXTURE_2D,
@@ -179,6 +180,7 @@ Texture::Texture(const std::string& filename)
 					);
 		break;
 	case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+		cout << "Texture compression is GL_COMPRESSED_RGBA_S3TC_DXT3_EXT " << endl;
 		glTexStorage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, Extent.x, Extent.y);
 		glCompressedTexSubImage2D(
 					GL_TEXTURE_2D,
@@ -192,6 +194,7 @@ Texture::Texture(const std::string& filename)
 					);
 		break;
 	case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+		cout << "Texture compression is GL_COMPRESSED_RGBA_S3TC_DXT5_EXT " << endl;
 		glTexStorage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, Extent.x, Extent.y);
 		glCompressedTexSubImage2D(
 					GL_TEXTURE_2D,
