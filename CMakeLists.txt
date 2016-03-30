@@ -17,6 +17,7 @@ find_package (GLFW3 REQUIRED)
 add_executable(s3tc_test ${SOURCES})
 
 target_link_libraries (s3tc_test
-	${GLFW3_LIBRARIES}
+	${OPENGL_LIBRARIES}
 	${GLEW_LIBRARIES}
-	${OPENGL_LIBRARIES})
+	${GLFW3_LIBRARIES}
+	)

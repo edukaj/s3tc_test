@@ -3,9 +3,12 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <stdexcept>
+#include <vector>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <memory>
+#include <algorithm>
 using namespace std;
 
 void key_callback(GLFWwindow* window, int key, int, int action, int);
@@ -21,7 +24,10 @@ GLuint g_VAO;
 int g_Width = 1280;
 int g_Height = 720;
 
-const std::string g_ResourcePath = "./";
+const string g_ResourcePath = "./";
+
+vector<string> g_ExtensionList;
+
 
 GLFWwindow* initializeWindow(int width = 1280, int height = 720, bool fullscreen = false,
 							 int glMajorVersione = 3,
@@ -51,6 +57,38 @@ GLFWwindow* initializeWindow(int width = 1280, int height = 720, bool fullscreen
 	return window;
 }
 
+void initOpenGLExtensions()
+{
+	int openGLExtensionCount = 0;
+	glGetIntegerv(GL_NUM_EXTENSIONS, &openGLExtensionCount);
+
+	g_ExtensionList.erase(begin(g_ExtensionList), end(g_ExtensionList));
+	g_ExtensionList.reserve(openGLExtensionCount);
+
+	for (int i = 0; i < openGLExtensionCount; ++i)
+		g_ExtensionList.push_back((const char*)glGetStringi(GL_EXTENSIONS, i));
+}
+
+bool doesExtensionExist(const string& name)
+{
+	return find(
+				begin(g_ExtensionList), end(g_ExtensionList), name) != end(g_ExtensionList);
+}
+
+void printOpenGLExtensions()
+{
+	cout << "OpenGL extensions" << endl;
+
+	for (int i = 0; i < g_ExtensionList.size(); i += 2)
+	{
+		 cout << setw(45) << g_ExtensionList[i];
+		 if (i + 1 < g_ExtensionList.size() )
+			 cout << " | " << g_ExtensionList[i + 1] << endl;
+		 else
+			 cout << endl;
+	}
+}
+
 void initalizeOpenGL()
 {
 	glewExperimental = GL_TRUE;
@@ -61,13 +99,18 @@ void initalizeOpenGL()
 	GLint maxTextureSize;
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
 
-	ostringstream os;
-	os << "Renderer: " << glGetString (GL_RENDERER) << '\n'
+	cout << "Renderer: " << glGetString (GL_RENDERER) << '\n'
 	   << "OpenGL Version: " << glGetString (GL_VERSION) << '\n'
 	   << "Max texture size is: " << maxTextureSize << 'x' << maxTextureSize
 	   << endl;
 
-	cout << os.str() << endl;
+	initOpenGLExtensions();
+	printOpenGLExtensions();
+
+	if (doesExtensionExist("GL_EXT_texture_compression_s3tc"))
+		cout << "GL_EXT_texture_compression_s3tc exist" << endl;
+	else
+		cerr << "GL_EXT_texture_compression_s3tc DOES NOT exist" << endl;
 
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -84,7 +127,6 @@ void initalizeOpenGL()
 	g_Technique->setUniform(
 				g_Technique->getUniformLocation("myTexture"), 0);
 }
-
 
 void key_callback(GLFWwindow* window, int key, int, int action, int)
 {

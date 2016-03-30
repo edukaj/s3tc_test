@@ -8,6 +8,7 @@ using namespace std;
 Texture::Texture(const std::string& filename)
 {
 #if 0
+	// Original example: can load every dxt format and ktx
 	gli::texture Texture = gli::load(filename);
 	if(Texture.empty())
 	{
@@ -126,10 +127,9 @@ Texture::Texture(const std::string& filename)
 				}
 			}
 #else
+	// reduced example to load only dxt3 formats
 
-	if(GLEW_EXT_texture_compression_s3tc == false)
-		cerr << "Be carefult missing GL_EXT_texture_compression_s3tc extension\nTexture may not work!" << endl;
-
+	// Loading texture
 	gli::texture Texture = gli::load(filename);
 	if(Texture.empty())
 	{
@@ -138,9 +138,23 @@ Texture::Texture(const std::string& filename)
 		throw runtime_error{os.str()};
 	}
 
+	// initializing gli to use OpenGL 3.3
 	gli::gl GL(gli::gl::PROFILE_GL33);
 	gli::gl::format const Format = GL.translate(Texture.format(), Texture.swizzles());
 	GLenum Target = GL.translate(Texture.target());
+
+
+	if (Target != GL_TEXTURE_2D)
+		throw runtime_error{"Texture target must be GL_TEXTURE_2D!"};
+
+	if (Format.Swizzles[0] != GL_RED ||
+			Format.Swizzles[1] != GL_GREEN ||
+			Format.Swizzles[2] != GL_BLUE ||
+			Format.Swizzles[3] != GL_ALPHA)
+		throw runtime_error{"Invalid swizzles format texture"};
+
+	if (Format.Internal != GL_COMPRESSED_RGBA_S3TC_DXT3_EXT)
+		throw runtime_error{"Only GL_COMPRESSED_RGBA_S3TC_DXT5_EXT compression supported!"};
 
 	glGenTextures(1, &mTexture);
 	glBindTexture(GL_TEXTURE_2D, mTexture);
@@ -152,27 +166,20 @@ Texture::Texture(const std::string& filename)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, Format.Swizzles[3]);
 
 	glm::tvec3<GLsizei> const Extent(Texture.extent());
-	GLsizei const FaceTotal = static_cast<GLsizei>(Texture.layers() * Texture.faces());
 
-	glTexStorage2D(GL_TEXTURE_2D, static_cast<GLint>(Texture.levels()), Format.Internal,
-				   Extent.x, Texture.target() == gli::TARGET_2D ? Extent.y : FaceTotal);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, Extent.x, Extent.y);
 
-	{
-		size_t Layer = 0;
-		size_t Face = 0;
-		size_t Level = 0;
+	glCompressedTexSubImage2D(
+				GL_TEXTURE_2D,
+				0u,
+				0, 0,
+				Extent.x,
+				Extent.y,
+				GL_COMPRESSED_RGBA_S3TC_DXT3_EXT,
+				static_cast<GLsizei>(Texture.size()),
+				Texture.data()
+				);
 
-		GLsizei const LayerGL = static_cast<GLsizei>(Layer);
-		glm::tvec3<GLsizei> Extent(Texture.extent(Level));
-
-		glCompressedTexSubImage2D(
-					GL_TEXTURE_2D, static_cast<GLint>(Level),
-					0, 0,
-					Extent.x,
-					Extent.y,
-					Format.Internal, static_cast<GLsizei>(Texture.size(Level)),
-					Texture.data(Layer, Face, Level));
-	}
 #endif
 }
 
