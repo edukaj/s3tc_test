@@ -20,10 +20,8 @@ public:
 		  mMesh{
 			   {{-0.5f,  0.5f}, {0.0f, 1.0f}},
 			   {{-0.5f, -0.5f}, {0.0f, 0.0f}},
-			   {{ 0.5f, -0.5f}, {1.0f, 0.0f}},
-			   {{ 0.5f, -0.5f}, {1.0f, 0.0f}},
 			   {{ 0.5f,  0.5f}, {1.0f, 1.0f}},
-			   {{-0.5f,  0.5f}, {0.0f, 1.0f}}
+			   {{ 0.5f, -0.5f}, {1.0f, 0.0f}},
 			   }
 	{
 		glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
@@ -55,7 +53,7 @@ public:
 		glEnableVertexAttribArray(static_cast<int>(ogl::AttribPosition::textCoords0));
 
 		mTechnique.enable();
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, mMesh.size());
 		mTechnique.disable();
 
 		glDisableVertexAttribArray(static_cast<int>(ogl::AttribPosition::position));

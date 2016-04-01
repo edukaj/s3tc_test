@@ -122,9 +122,33 @@ void GLFWErrorCallback(int error, const char* description)
 
 namespace ogl {
 
-void Initialize(int argc, char *argv[], const Context &ctx)
+void setContextSettings(const Context& ctx)
 {
 	g_Context = ctx;
+
+
+	if (g_Context.renderer == Renderer::OPENGL)
+	{
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, g_Context.forwardCompatible);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
+	}
+	else
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, g_Context.openglmajor);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, g_Context.openglMinor);
+
+
+#ifndef NDEBUG
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+#endif
+
+}
+
+void Initialize(int argc, char *argv[], const Context &ctx)
+{
 
 	if(!glfwInit())
 		throw std::runtime_error{"Unable to initalize glfw"};
@@ -134,19 +158,15 @@ void Initialize(int argc, char *argv[], const Context &ctx)
 	int major, minor, rev;
 	glfwGetVersion(&major, &minor, &rev);
 
+	setContextSettings(ctx);
+
 	cout << "GLFW " << major << '.' << minor << '.' << rev << " initialized" << endl;
 }
+
 
 void CreateWindow(const string title, size_t width, size_t height, bool fullscreen)
 {
 	GLFWmonitor* monitor = fullscreen ? glfwGetPrimaryMonitor() : nullptr;
-
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, g_Context.openglmajor);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, g_Context.openglMinor);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, g_Context.forwardCompatible);
-
-	if (g_Context.coreProfile)
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	g_GLFW_Window = glfwCreateWindow(width, height, title.c_str(), monitor, nullptr);
 
@@ -167,16 +187,17 @@ void CreateWindow(const string title, size_t width, size_t height, bool fullscre
 
 void RunMainLoop(WindowInterface& window)
 {
-//	glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
-//	glFrontFace(GL_CW);
-//	glCullFace(GL_BACK);
-//	glEnable(GL_CULL_FACE);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-//	if (g_Context.enableDepthTest)
-//	{
-//		cout << "Enabling depth test" << endl;
+	glFrontFace(GL_CCW);
+	glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
+
+	if (g_Context.enableDepthTest)
+	{
+		cout << "Enabling depth test" << endl;
 //		glEnable(GL_DEPTH_TEST);
-//	}
+	}
 
 	g_Window = &window;
 	GLFWInitCallbacks();

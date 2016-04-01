@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GL/glew.h>
+#include "context.h"
 #include <string>
 
 namespace ogl {
@@ -120,17 +120,6 @@ enum class MouseButton {
 enum class KeyState {
 	PRESS,
 	RELEASE
-};
-
-struct Context
-{
-	bool enableDepthTest = true;
-	bool enableStencilTest = false;
-
-	int openglmajor = 3;
-	int openglMinor = 3;
-	int coreProfile = true;
-	int forwardCompatible = false;
 };
 
 class WindowInterface {

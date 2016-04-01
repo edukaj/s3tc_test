@@ -1,5 +1,4 @@
-#ifndef TECHNIQUE_H
-#define TECHNIQUE_H
+#pragma once
 
 #include <GL/glew.h>
 #include <string>
@@ -33,5 +32,3 @@ private:
 };
 
 }
-
-#endif // TECHNIQUE_H
