@@ -1,9 +1,11 @@
 #ifndef TECHNIQUE_H
 #define TECHNIQUE_H
 
+#include <GL/glew.h>
 #include <string>
 #include <vector>
-#include <GL/glew.h>
+
+namespace ogl {
 
 class Technique {
 public:
@@ -30,5 +32,6 @@ private:
 	std::vector<GLint> mShaders;
 };
 
+}
 
 #endif // TECHNIQUE_H

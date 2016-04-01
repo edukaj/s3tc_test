@@ -4,10 +4,24 @@
 #include <sstream>
 
 using namespace std;
+using namespace ogl;
 
 Texture::Texture(const std::string& filename)
 {
-#if 0
+	load(filename);
+}
+
+Texture::~Texture()
+{
+	glDeleteTextures(1, &mTexture);
+}
+
+void Texture::load(const string filename)
+{
+	if (mTexture != -1)
+		glDeleteTextures(1, &mTexture);
+
+#if 1
 	// Original example: can load every dxt format and ktx
 	gli::texture Texture = gli::load(filename);
 	if(Texture.empty())
@@ -32,6 +46,9 @@ Texture::Texture(const std::string& filename)
 
 	glm::tvec3<GLsizei> const Extent(Texture.extent());
 	GLsizei const FaceTotal = static_cast<GLsizei>(Texture.layers() * Texture.faces());
+
+	// print image info
+	cout << "" << endl;
 
 	switch(Texture.target())
 	{
@@ -215,11 +232,6 @@ Texture::Texture(const std::string& filename)
 
 
 #endif
-}
-
-Texture::~Texture()
-{
-	glDeleteTextures(1, &mTexture);
 }
 
 void Texture::enable(GLenum textureUnit)

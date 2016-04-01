@@ -4,6 +4,7 @@
 #include <sstream>
 
 using namespace std;
+using namespace ogl;
 
 Technique::Technique() : mProgramID(glCreateProgram())
 {
@@ -130,7 +131,6 @@ void Technique::deleteShaders()
 
 string Technique::getTextFromFile(const string &filename)
 {
-
 	ifstream file(filename);
 
 	if(!file)
