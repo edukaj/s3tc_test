@@ -12,12 +12,12 @@ struct Context
 	bool enableDepthTest = true;
 	bool enableStencilTest = false;
 
-	int openglmajor = 3;
-	int openglMinor = 0;
+	int openglMajor = 3;
+	int openglMinor = 3;
 	int coreProfile = true;
 	int forwardCompatible = false;
 
-	Renderer renderer = Renderer::OPENGL_ES;
+	Renderer renderer = Renderer::OPENGL;
 };
 
 } // namespace ogl

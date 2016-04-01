@@ -137,7 +137,7 @@ void setContextSettings(const Context& ctx)
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
 
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, g_Context.openglmajor);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, g_Context.openglMajor);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, g_Context.openglMinor);
 
 
