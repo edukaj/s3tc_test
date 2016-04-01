@@ -5,10 +5,10 @@ using namespace ogl;
 TextureTestWindow::TextureTestWindow(const string &filename)
 	: mTexture{filename},
 	  mPositions{
-		  {-0.5f,  0.5f, 0.0f, 1.0f},
-		  {-0.5f, -0.5f, 0.0f, 1.0f},
-		  { 0.5f,  0.5f, 0.0f, 1.0f},
-		  { 0.5f, -0.5f, 0.0f, 1.0f}
+		  {-1.0f,  1.0f, 0.0f, 1.0f},
+		  {-1.0f, -1.0f, 0.0f, 1.0f},
+		  { 1.0f,  1.0f, 0.0f, 1.0f},
+		  { 1.0f, -1.0f, 0.0f, 1.0f}
 		  },
 	  mTextCoords{{0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}}
 {
@@ -22,8 +22,9 @@ TextureTestWindow::TextureTestWindow(const string &filename)
 	mTechnique.enable();
 	mTechnique.setUniform(mTechnique.getUniformLocation("tex0"), 0);
 	mTechnique.setUniform(mTechnique.getUniformLocation("model"), glm::mat4());
-	mTechnique.setUniform(mTechnique.getUniformLocation("camera"), glm::mat4());
 	mTechnique.disable();
+
+	mCamera.setPosition({0.0f, 0.0f, 0.0f});
 }
 
 void TextureTestWindow::onKeyboardEvent(Key key, KeyState keyState)
@@ -32,13 +33,13 @@ void TextureTestWindow::onKeyboardEvent(Key key, KeyState keyState)
 	case Key::w:
 	case Key::W:
 	case Key::UP:
-		mCamera.offsetPosition(glm::vec3(0.0f, 0.0f, 1.0f));
+		mCamera.offsetPosition(mCamera.forward());
 		break;
 
 	case Key::s:
 	case Key::S:
 	case Key::DOWN:
-		mCamera.offsetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
+		mCamera.offsetPosition(-mCamera.forward());
 		break;
 
 	case Key::a:
@@ -72,7 +73,13 @@ void TextureTestWindow::onRenderSceneEvent()
 
 void TextureTestWindow::onResizeEvent(int width, int height)
 {
-	glViewport(0, 0, width, height);
+	mWidth = width;
+	mHeight = height;
+	glViewport(0, 0, mWidth, mHeight);
+
+	mCamera.setViewportAspectRatio(mWidth / mHeight);
+	mCamera.setFieldOfView(45.0f);
+	mCamera.setNearAndFarPlanes(1.0f, 100.0f);
 }
 
 void TextureTestWindow::enableVertexArrayObject()
@@ -123,6 +130,13 @@ void TextureTestWindow::disableVertexes()
 {
 	glDisableVertexAttribArray(static_cast<int>(ogl::AttribPosition::position));
 	glDisableVertexAttribArray(static_cast<int>(ogl::AttribPosition::textCoords0));
+}
+
+void TextureTestWindow::updateCamera()
+{
+	mTechnique.enable();
+	mTechnique.setUniform(mTechnique.getUniformLocation("camera"), mCamera.matrix());
+	mTechnique.disable();
 }
 
 void TextureTestWindow::createVertexArrayObject()

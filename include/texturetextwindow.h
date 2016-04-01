@@ -28,6 +28,8 @@ private:
 	void enableVertexes();
 	void disableVertexes();
 
+	void updateCamera();
+
 private:
 	ogl::Camera mCamera;
 	ogl::Technique mTechnique;
@@ -35,6 +37,9 @@ private:
 	GLuint mArrayBufferObject;
 	GLuint mPositionBuffer;
 	GLuint mTextCoords0Buffer;
+
+	int mWidth;
+	int mHeight;
 
 	std::vector<glm::vec4> mPositions;
 	std::vector<glm::vec2> mTextCoords;

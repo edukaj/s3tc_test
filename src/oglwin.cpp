@@ -181,7 +181,9 @@ void CreateWindow(const string title, size_t width, size_t height, bool fullscre
 		throw runtime_error{(const char*)glewGetErrorString(res)};
 
 	cout << "Renderer: " << glGetString (GL_RENDERER) << '\n'
-		 << "OpenGL Version: " << glGetString (GL_VERSION)
+		 << "OpenGL Version: " << glGetString (GL_VERSION) << '\n'
+		 << "GLSL Version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << '\n'
+		 << "Vendor: " << glGetString(GL_VENDOR)
 		 << endl;
 }
 
