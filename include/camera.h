@@ -1,58 +1,125 @@
 #pragma once
 
+
 #include "oglwin.h"
 #include <glm/glm.hpp>
 
 namespace ogl {
 
-/**
-	 A first-person shooter type of camera.
-	 Set the properties of the camera, then use the `matrix` method to get the camera matrix for
-	 use in the vertex shader.
-	 Includes the perspective projection matrix.
-	 */
 class Camera {
 public:
-	Camera();
+	Camera(int width, int height);
+	Camera(int width, int height, const glm::vec3& mPosition, const glm::vec3& front, const glm::vec3& up);
 
-	const glm::vec3& position() const;
-	void setPosition(const glm::vec3& position);
-	void offsetPosition(const glm::vec3& offset);
 
-	float fieldOfView() const;
-	void setFieldOfView(float fieldOfView);
+	const glm::vec3& position() const
+	{
+		return mPosition;
+	}
 
-	float nearPlane() const;
-	float farPlane() const;
+	Camera& setPosition(const glm::vec3& position)
+	{
+		mPosition = position; return *this;
+	}
 
-	void setNearAndFarPlanes(float nearPlane, float farPlane);
+	Camera& offsetPosition(const glm::vec3& offset)
+	{
+		mPosition += offset;
+		return *this;
+	}
 
-	glm::mat4 orientation() const;
-	void offsetOrientation(float upAngle, float rightAngle);
 
-	void lookAt(glm::vec3 position);
+	const glm::vec3& front() const
+	{
+		return mFront;
+	}
 
-	float viewportAspectRatio() const;
-	void setViewportAspectRatio(float viewportAspectRatio);
+	Camera& setFront(const glm::vec3& front)
+	{
+		mFront= front;
+		return *this;
+	}
 
-	glm::vec3 forward() const;
-	glm::vec3 right() const;
-	glm::vec3 up() const;
+	Camera& offsetFront(const glm::vec3& offset)
+	{
+		mFront += offset;
+		return *this;
+	}
+
+
+	const glm::vec3& up() const
+	{
+		return mUp;
+	}
+
+	Camera& setUp(const glm::vec3& up)
+	{
+		mUp = up;
+		return *this;
+	}
+
+	Camera& offsetUp(const glm::vec3& offset)
+	{
+		mUp += offset;
+		return *this;
+	}
+
+
+	float fieldOfView() const
+	{
+		return mFovy;
+	}
+
+	Camera& setFieldOfView(float fov)
+	{
+		mFovy = fov;
+		return *this;
+	}
+
+
+	float viewportAspectRatio() const
+	{
+		return mAspectRatio;
+	}
+
+	Camera& setViewportAspectRatio(float aspectRatio) {
+		mAspectRatio = aspectRatio;
+		return *this;
+	}
+
+
+	float zNear() const
+	{
+		return mZNear;
+	}
+
+	float zFar() const
+	{
+		return mZFar;
+	}
+
+	Camera& setNearAndFarPlanes(float zNear, float zFar)
+	{
+		mZFar = zFar;
+		mZNear = zNear;
+		return *this;
+	}
 
 	glm::mat4 matrix() const;
-	glm::mat4 projection() const;
-	glm::mat4 view() const;
+
 
 private:
-	glm::vec3 mPosition;
-	float mHorizontalAngle;
-	float mVerticalAngle;
-	float mFieldOfView;
-	float mNearPlane;
-	float mFarPlane;
-	float mViewportAspectRatio;
+	int mWidth;
+	int mHeight;
 
-	void normalizeAngles();
+	float mFovy = 45.0f;
+	float mAspectRatio;
+	float mZNear = 1.0f;
+	float mZFar = 1000.0f;
+
+	glm::vec3 mPosition;
+	glm::vec3 mFront;
+	glm::vec3 mUp;
 };
 
 } // namespace ogl

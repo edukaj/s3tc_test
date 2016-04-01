@@ -21,7 +21,6 @@ void Texture::load(const string filename)
 	if (mTexture != -1)
 		glDeleteTextures(1, &mTexture);
 
-#if 1
 	// Original example: can load every dxt format and ktx
 	gli::texture Texture = gli::load(filename);
 	if(Texture.empty())
@@ -143,95 +142,9 @@ void Texture::load(const string filename)
 				default: assert(0); break;
 				}
 			}
-#else
-	// reduced example to load only dxt3 formats
 
-	// Loading texture
-	gli::texture Texture = gli::load(filename);
-	if(Texture.empty())
-	{
-		ostringstream os;
-		os << "unable to load image " << filename;
-		throw runtime_error{os.str()};
-	}
-
-	// initializing gli to use OpenGL 3.3
-	gli::gl GL(gli::gl::PROFILE_GL33);
-	gli::gl::format const Format = GL.translate(Texture.format(), Texture.swizzles());
-	GLenum Target = GL.translate(Texture.target());
-
-
-	if (Target != GL_TEXTURE_2D)
-		throw runtime_error{"Texture target must be GL_TEXTURE_2D!"};
-
-	if (Format.Swizzles[0] != GL_RED ||
-			Format.Swizzles[1] != GL_GREEN ||
-			Format.Swizzles[2] != GL_BLUE ||
-			Format.Swizzles[3] != GL_ALPHA)
-		throw runtime_error{"Invalid swizzles format texture"};
-
-	glGenTextures(1, &mTexture);
-	glBindTexture(GL_TEXTURE_2D, mTexture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, static_cast<GLint>(Texture.levels() - 1));
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_R, Format.Swizzles[0]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, Format.Swizzles[1]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, Format.Swizzles[2]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, Format.Swizzles[3]);
-
-	glm::tvec3<GLsizei> const Extent(Texture.extent());
-
-	switch (Format.Internal) {
-	case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-		cout << "Texture compression is GL_COMPRESSED_RGBA_S3TC_DXT1_EXT " << endl;
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, Extent.x, Extent.y);
-		glCompressedTexSubImage2D(
-					GL_TEXTURE_2D,
-					0u,
-					0, 0,
-					Extent.x,
-					Extent.y,
-					GL_COMPRESSED_RGBA_S3TC_DXT3_EXT,
-					static_cast<GLsizei>(Texture.size()),
-					Texture.data()
-					);
-		break;
-	case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-		cout << "Texture compression is GL_COMPRESSED_RGBA_S3TC_DXT3_EXT " << endl;
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, Extent.x, Extent.y);
-		glCompressedTexSubImage2D(
-					GL_TEXTURE_2D,
-					0u,
-					0, 0,
-					Extent.x,
-					Extent.y,
-					GL_COMPRESSED_RGBA_S3TC_DXT3_EXT,
-					static_cast<GLsizei>(Texture.size()),
-					Texture.data()
-					);
-		break;
-	case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
-		cout << "Texture compression is GL_COMPRESSED_RGBA_S3TC_DXT5_EXT " << endl;
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, Extent.x, Extent.y);
-		glCompressedTexSubImage2D(
-					GL_TEXTURE_2D,
-					0u,
-					0, 0,
-					Extent.x,
-					Extent.y,
-					GL_COMPRESSED_RGBA_S3TC_DXT3_EXT,
-					static_cast<GLsizei>(Texture.size()),
-					Texture.data()
-					);
-		break;
-
-
-	default:
-		throw runtime_error{"Unsupported texture format"};
-	}
-
-
-#endif
+	glTexParameteri(Target, GL_GENERATE_MIPMAP, GL_TRUE);
+	glGenerateMipmap(Target);
 }
 
 void Texture::enable(GLenum textureUnit)

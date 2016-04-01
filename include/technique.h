@@ -13,17 +13,16 @@ public:
 	Technique();
 	~Technique();
 
-	void addShaderProgram(GLenum type, const std::string& filename);
+	Technique& addShaderProgram(GLenum type, const std::string& filename);
 
-	void finalize();
+	Technique& finalize();
 
-	void enable();
-	void disable();
+	Technique& enable();
+	Technique& disable();
 
 	GLint getUniformLocation(const std::string& uniformName);
-	void setVertexLocation(const std::string& attribName, GLint attribLocation);
-	void setUniform(GLint location, GLint value);
-	void setUniform(GLint location, glm::mat4 mat);
+	Technique& setUniform(GLint location, GLint value);
+	Technique& setUniform(GLint location, glm::mat4 mat);
 
 private:
 	void deleteShaders();

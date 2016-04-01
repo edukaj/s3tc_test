@@ -19,7 +19,7 @@ Technique::~Technique()
 	glDeleteProgram(mProgramID);
 }
 
-void Technique::addShaderProgram(GLenum type, const string &filename)
+Technique& Technique::addShaderProgram(GLenum type, const string &filename)
 {
 	GLint shaderID = glCreateShader (type);
 	const auto shaderSource = getTextFromFile(filename);
@@ -46,9 +46,11 @@ void Technique::addShaderProgram(GLenum type, const string &filename)
 	}
 
 	mShaders.push_back(shaderID);
+
+	return *this;
 }
 
-void Technique::finalize()
+Technique &Technique::finalize()
 {
 	for(auto shader : mShaders)
 		glAttachShader(mProgramID, shader);
@@ -88,16 +90,20 @@ void Technique::finalize()
 	}
 
 	deleteShaders();
+
+	return *this;
 }
 
-void Technique::enable()
+Technique& Technique::enable()
 {
 	glUseProgram(mProgramID);
+	return *this;
 }
 
-void Technique::disable()
+Technique& Technique::disable()
 {
 	glUseProgram(0);
+	return *this;
 }
 
 GLint Technique::getUniformLocation(const string &uniformName)
@@ -119,19 +125,16 @@ GLint Technique::getUniformLocation(const string &uniformName)
 	return mUniformLocationMap[uniformName];
 }
 
-void Technique::setVertexLocation(const string &attribName, GLint attribLocation)
-{
-	glBindAttribLocation(mProgramID, attribLocation, attribName.c_str());
-}
-
-void Technique::setUniform(GLint location, GLint value)
+Technique& Technique::setUniform(GLint location, GLint value)
 {
 	glUniform1i(location, value);
+	return *this;
 }
 
-void Technique::setUniform(GLint location, glm::mat4 mat)
+Technique& Technique::setUniform(GLint location, glm::mat4 mat)
 {
 	glUniformMatrix4fv(location, 1, false, glm::value_ptr(mat));
+	return *this;
 }
 
 void Technique::deleteShaders()

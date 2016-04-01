@@ -2,36 +2,45 @@
 using namespace std;
 using namespace ogl;
 
-TextureTestWindow::TextureTestWindow(const string &filename)
-	: mTexture{filename},
+TextureTestWindow::TextureTestWindow(int width, int height, const string &filename)
+	: mWidth{width}, mHeight{height},
+	  mTexture{filename},
 	  mPositions{
 		  {-1.0f,  1.0f, 0.0f, 1.0f},
 		  {-1.0f, -1.0f, 0.0f, 1.0f},
 		  { 1.0f,  1.0f, 0.0f, 1.0f},
 		  { 1.0f, -1.0f, 0.0f, 1.0f}
 		  },
-	  mTextCoords{{0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}}
+	  mTextCoords{{0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}},
+	  mCamera{width, height}
 {
 	createPositionAndTextCoordsBufferObjects();
 	createVertexArrayObject();
 
-	mTechnique.addShaderProgram(GL_VERTEX_SHADER, {"resources/vertexshader.glsl"});
-	mTechnique.addShaderProgram(GL_FRAGMENT_SHADER, {"resources/fragmentshader.glsl"});
+	mTechnique
+			.addShaderProgram(GL_VERTEX_SHADER, {"resources/vertexshader.glsl"})
+			.addShaderProgram(GL_FRAGMENT_SHADER, {"resources/fragmentshader.glsl"});
+
 	mTechnique.finalize();
-
 	mTechnique.enable();
-	mTechnique.setUniform(mTechnique.getUniformLocation("tex0"), 0);
-	mTechnique.setUniform(mTechnique.getUniformLocation("model"), glm::mat4());
-	mTechnique.setUniform(mTechnique.getUniformLocation("camera"), glm::mat4());
-	mTechnique.disable();
+	mTechnique
+			.setUniform(mTechnique.getUniformLocation("tex0"), 0)
+			.setUniform(mTechnique.getUniformLocation("model"), glm::mat4());
 
-	mCamera.setPosition({0.0f, 0.0f, 0.0f});
+	glViewport(0, 0, mWidth, mHeight);
+
+	mCamera.setPosition({0.0f, 0.0f, 10.0f})
+			.setFieldOfView(45.0f)
+			.setNearAndFarPlanes(1.0f, 1000.0f)
+			.setViewportAspectRatio((float)mWidth / mHeight);
+
+	updateCamera();
 }
 
 void TextureTestWindow::onKeyboardEvent(Key key, KeyState keyState)
 {
-	const float speed = 0.3f;
-	glm::vec3 offsetVec = glm::vec3{0.0f, 0.0f, 1.0f} * speed;
+	const float speed = 0.1f;
+	glm::vec3 offsetVec = glm::vec3{0.0f, 0.0f, -1.0f} * speed;
 
 	switch (key) {
 	case Key::w:
@@ -39,7 +48,6 @@ void TextureTestWindow::onKeyboardEvent(Key key, KeyState keyState)
 	case Key::UP:
 		mCamera.offsetPosition(offsetVec);
 		updateCamera();
-
 		break;
 
 	case Key::s:
@@ -71,9 +79,7 @@ void TextureTestWindow::onRenderSceneEvent()
 	mTexture.enable(GL_TEXTURE0);
 	enableVertexArrayObject();
 
-	mTechnique.enable();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, mPositions.size());
-	mTechnique.disable();
 
 	disableVertexes();
 }
@@ -84,9 +90,8 @@ void TextureTestWindow::onResizeEvent(int width, int height)
 	mHeight = height;
 	glViewport(0, 0, mWidth, mHeight);
 
-	mCamera.setViewportAspectRatio(mWidth / mHeight);
-	mCamera.setFieldOfView(45.0f);
-	mCamera.setNearAndFarPlanes(1.0f, 100.0f);
+	mCamera.setViewportAspectRatio((float)mWidth / mHeight);
+	updateCamera();
 }
 
 void TextureTestWindow::enableVertexArrayObject()
@@ -97,7 +102,7 @@ void TextureTestWindow::enableVertexArrayObject()
 
 void TextureTestWindow::createPositionAndTextCoordsBufferObjects()
 {
-	// This will identify our vertex buffer
+	// This will identify our vertex buffervoid
 	glGenBuffers(1, &mPositionBuffer);
 	updatePositionBuffer();
 
@@ -141,9 +146,7 @@ void TextureTestWindow::disableVertexes()
 
 void TextureTestWindow::updateCamera()
 {
-	mTechnique.enable();
 	mTechnique.setUniform(mTechnique.getUniformLocation("camera"), mCamera.matrix());
-	mTechnique.disable();
 }
 
 void TextureTestWindow::createVertexArrayObject()

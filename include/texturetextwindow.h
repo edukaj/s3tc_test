@@ -8,7 +8,7 @@
 
 class TextureTestWindow : public ogl::WindowInterface {
 public:
-	TextureTestWindow (const std::string& filename);
+	TextureTestWindow (int width, int height, const std::string& filename);
 
 	void onKeyboardEvent(ogl::Key key, ogl::KeyState keyState) override;
 	void onRenderSceneEvent() override;
