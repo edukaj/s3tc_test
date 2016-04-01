@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glm/glm.hpp>
 #include <GL/glew.h>
 #include <string>
 #include <vector>
@@ -21,6 +22,7 @@ public:
 	GLint getUniformLocation(const std::string& uniformName);
 	void setVertexLocation(const std::string& attribName, GLint attribLocation);
 	void setUniform(GLint location, GLint value);
+	void setUniform(GLint location, glm::mat4 mat);
 
 private:
 	void deleteShaders();

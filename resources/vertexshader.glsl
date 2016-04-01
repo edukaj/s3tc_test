@@ -1,15 +1,15 @@
-#version 300 es
+#version 330
 
-precision highp float;
-precision highp int;
+layout(location = 0) in vec4 vertexPosition;
+layout(location = 1) in vec2 textCoords0;
 
-layout(location = 0) in vec2 vertexPosition;
-layout(location = 1) in vec2 inTextCoords0;
+uniform mat4 camera;
+uniform mat4 model;
 
-out vec2 texCoords0;
+out vec2 fragTexCoords0;
 
 void main()
 {
-	gl_Position = vec4(vertexPosition, 0.0, 1.0);
-	texCoords0 = inTextCoords0;
+	gl_Position = camera * model * vertexPosition;
+	fragTexCoords0 = textCoords0;
 }

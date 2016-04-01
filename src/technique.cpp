@@ -1,4 +1,5 @@
 #include "technique.h"
+#include <glm/gtc/type_ptr.hpp>
 #include <stdexcept>
 #include <fstream>
 #include <sstream>
@@ -120,6 +121,11 @@ void Technique::setVertexLocation(const string &attribName, GLint attribLocation
 void Technique::setUniform(GLint location, GLint value)
 {
 	glUniform1i(location, value);
+}
+
+void Technique::setUniform(GLint location, glm::mat4 mat)
+{
+	glUniformMatrix4fv(location, 1, false, glm::value_ptr(mat));
 }
 
 void Technique::deleteShaders()

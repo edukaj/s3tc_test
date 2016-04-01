@@ -4,8 +4,13 @@ using namespace ogl;
 
 TextureTestWindow::TextureTestWindow(const string &filename)
 	: mTexture{filename},
-	  mPositions{{-0.5f,  0.5f}, {-0.5f, -0.5f}, { 0.5f,  0.5f}, { 0.5f, -0.5f}},
-	  mTextCoords{{0.0f, 1.0f}, {0.0f, 0.0f}, {1.0f, 1.0f}, {1.0f, 0.0f}}
+	  mPositions{
+		  {-0.5f,  0.5f, 0.0f, 1.0f},
+		  {-0.5f, -0.5f, 0.0f, 1.0f},
+		  { 0.5f,  0.5f, 0.0f, 1.0f},
+		  { 0.5f, -0.5f, 0.0f, 1.0f}
+		  },
+	  mTextCoords{{0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}}
 {
 	createPositionAndTextCoordsBufferObjects();
 	createVertexArrayObject();
@@ -15,7 +20,9 @@ TextureTestWindow::TextureTestWindow(const string &filename)
 	mTechnique.finalize();
 
 	mTechnique.enable();
-	mTechnique.setUniform(mTechnique.getUniformLocation("myTexture"), 0);
+	mTechnique.setUniform(mTechnique.getUniformLocation("tex0"), 0);
+	mTechnique.setUniform(mTechnique.getUniformLocation("model"), glm::mat4());
+	mTechnique.setUniform(mTechnique.getUniformLocation("camera"), glm::mat4());
 	mTechnique.disable();
 }
 
@@ -25,11 +32,13 @@ void TextureTestWindow::onKeyboardEvent(Key key, KeyState keyState)
 	case Key::w:
 	case Key::W:
 	case Key::UP:
+		mCamera.offsetPosition(glm::vec3(0.0f, 0.0f, 1.0f));
 		break;
 
 	case Key::s:
 	case Key::S:
 	case Key::DOWN:
+		mCamera.offsetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
 		break;
 
 	case Key::a:
@@ -54,15 +63,11 @@ void TextureTestWindow::onRenderSceneEvent()
 	mTexture.enable(GL_TEXTURE0);
 	enableVertexArrayObject();
 
-	glEnableVertexAttribArray(static_cast<int>(ogl::AttribPosition::position));
-	glEnableVertexAttribArray(static_cast<int>(ogl::AttribPosition::textCoords0));
-
 	mTechnique.enable();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, mPositions.size());
 	mTechnique.disable();
 
-	glDisableVertexAttribArray(static_cast<int>(ogl::AttribPosition::position));
-	glDisableVertexAttribArray(static_cast<int>(ogl::AttribPosition::textCoords0));
+	disableVertexes();
 }
 
 void TextureTestWindow::onResizeEvent(int width, int height)
@@ -73,16 +78,14 @@ void TextureTestWindow::onResizeEvent(int width, int height)
 void TextureTestWindow::enableVertexArrayObject()
 {
 	glBindVertexArray(mArrayBufferObject);
+	enableVertexes();
 }
 
 void TextureTestWindow::createPositionAndTextCoordsBufferObjects()
 {
 	// This will identify our vertex buffer
 	glGenBuffers(1, &mPositionBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, mPositionBuffer);
-	glBufferData(GL_ARRAY_BUFFER, mPositions.size() * sizeof(glm::vec2),
-				 mPositions.data(), GL_DYNAMIC_DRAW);
-
+	updatePositionBuffer();
 
 	glGenBuffers(1, &mTextCoords0Buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, mTextCoords0Buffer);
@@ -95,7 +98,7 @@ void TextureTestWindow::mapPositionVertex()
 	glBindBuffer(GL_ARRAY_BUFFER, mPositionBuffer);
 	glEnableVertexAttribArray(static_cast<int>(ogl::AttribPosition::position));
 	glVertexAttribPointer(static_cast<int>(ogl::AttribPosition::position),
-						  2, GL_FLOAT, GL_FALSE,
+						  4, GL_FLOAT, GL_FALSE,
 						  sizeof(mPositions[0]), nullptr);
 	glDisableVertexAttribArray(static_cast<int>(ogl::AttribPosition::position));
 }
@@ -106,7 +109,19 @@ void TextureTestWindow::mapTextCoords0Vertex()
 	glEnableVertexAttribArray(static_cast<int>(ogl::AttribPosition::textCoords0));
 	glVertexAttribPointer(static_cast<int>(ogl::AttribPosition::textCoords0),
 						  2, GL_FLOAT, GL_FALSE,
-						  sizeof(mPositions[0]), nullptr);
+						  sizeof(mTextCoords[0]), nullptr);
+	glDisableVertexAttribArray(static_cast<int>(ogl::AttribPosition::textCoords0));
+}
+
+void TextureTestWindow::enableVertexes()
+{
+	glEnableVertexAttribArray(static_cast<int>(ogl::AttribPosition::position));
+	glEnableVertexAttribArray(static_cast<int>(ogl::AttribPosition::textCoords0));
+}
+
+void TextureTestWindow::disableVertexes()
+{
+	glDisableVertexAttribArray(static_cast<int>(ogl::AttribPosition::position));
 	glDisableVertexAttribArray(static_cast<int>(ogl::AttribPosition::textCoords0));
 }
 
@@ -117,4 +132,11 @@ void TextureTestWindow::createVertexArrayObject()
 
 	mapPositionVertex();
 	mapTextCoords0Vertex();
+}
+
+void TextureTestWindow::updatePositionBuffer()
+{
+	glBindBuffer(GL_ARRAY_BUFFER, mPositionBuffer);
+	glBufferData(GL_ARRAY_BUFFER, mPositions.size() * sizeof(glm::vec4),
+				 mPositions.data(), GL_DYNAMIC_DRAW);
 }
