@@ -57,8 +57,8 @@ void Camera::setNearAndFarPlanes(float nearPlane, float farPlane) {
 
 glm::mat4 Camera::orientation() const {
 	glm::mat4 orientation;
-	orientation = glm::rotate(orientation, glm::radians(mVerticalAngle), glm::vec3(1,0,0));
-	orientation = glm::rotate(orientation, glm::radians(mHorizontalAngle), glm::vec3(0,1,0));
+	orientation = glm::rotate(orientation, glm::radians(mVerticalAngle), glm::vec3(1.0f, 0.0f, 0.0f));
+	orientation = glm::rotate(orientation, glm::radians(mHorizontalAngle), glm::vec3(0.0f, 1.0f, 0.0f));
 	return orientation;
 }
 
@@ -86,17 +86,17 @@ void Camera::setViewportAspectRatio(float viewportAspectRatio) {
 }
 
 glm::vec3 Camera::forward() const {
-	glm::vec4 forward = glm::inverse(orientation()) * glm::vec4(0,0,-1,1);
+	glm::vec4 forward = glm::inverse(orientation()) * glm::vec4(0.0f, 0.0f, -1.0f, 1.0f);
 	return glm::vec3(forward);
 }
 
 glm::vec3 Camera::right() const {
-	glm::vec4 right = glm::inverse(orientation()) * glm::vec4(1,0,0,1);
+	glm::vec4 right = glm::inverse(orientation()) * glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 	return glm::vec3(right);
 }
 
 glm::vec3 Camera::up() const {
-	glm::vec4 up = glm::inverse(orientation()) * glm::vec4(0,1,0,1);
+	glm::vec4 up = glm::inverse(orientation()) * glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 	return glm::vec3(up);
 }
 

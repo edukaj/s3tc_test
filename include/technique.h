@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <string>
 #include <vector>
+#include <map>
 
 namespace ogl {
 
@@ -31,6 +32,7 @@ private:
 private:
 	GLint mProgramID;
 	std::vector<GLint> mShaders;
+	std::map<std::string, GLuint> mUniformLocationMap;
 };
 
 }

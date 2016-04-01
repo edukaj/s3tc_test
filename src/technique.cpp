@@ -102,15 +102,21 @@ void Technique::disable()
 
 GLint Technique::getUniformLocation(const string &uniformName)
 {
-	GLint location = glGetUniformLocation(mProgramID, uniformName.c_str());
-
-	if(location == -1)
+	if (mUniformLocationMap.find(uniformName) == end(mUniformLocationMap))
 	{
-		ostringstream os;
-		os << "Unable to locate:" << uniformName << " uniform location";
-		throw runtime_error(os.str());
+		GLint location = glGetUniformLocation(mProgramID, uniformName.c_str());
+
+		if(location == -1)
+		{
+			ostringstream os;
+			os << "Unable to locate:" << uniformName << " uniform location";
+			throw runtime_error(os.str());
+		}
+
+		mUniformLocationMap[uniformName] = location;
 	}
-	return location;
+
+	return mUniformLocationMap[uniformName];
 }
 
 void Technique::setVertexLocation(const string &attribName, GLint attribLocation)

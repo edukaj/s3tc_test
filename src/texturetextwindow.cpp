@@ -22,6 +22,7 @@ TextureTestWindow::TextureTestWindow(const string &filename)
 	mTechnique.enable();
 	mTechnique.setUniform(mTechnique.getUniformLocation("tex0"), 0);
 	mTechnique.setUniform(mTechnique.getUniformLocation("model"), glm::mat4());
+	mTechnique.setUniform(mTechnique.getUniformLocation("camera"), glm::mat4());
 	mTechnique.disable();
 
 	mCamera.setPosition({0.0f, 0.0f, 0.0f});
@@ -29,17 +30,23 @@ TextureTestWindow::TextureTestWindow(const string &filename)
 
 void TextureTestWindow::onKeyboardEvent(Key key, KeyState keyState)
 {
+	const float speed = 0.3f;
+	glm::vec3 offsetVec = glm::vec3{0.0f, 0.0f, 1.0f} * speed;
+
 	switch (key) {
 	case Key::w:
 	case Key::W:
 	case Key::UP:
-		mCamera.offsetPosition(mCamera.forward());
+		mCamera.offsetPosition(offsetVec);
+		updateCamera();
+
 		break;
 
 	case Key::s:
 	case Key::S:
 	case Key::DOWN:
-		mCamera.offsetPosition(-mCamera.forward());
+		mCamera.offsetPosition(-offsetVec);
+		updateCamera();
 		break;
 
 	case Key::a:
