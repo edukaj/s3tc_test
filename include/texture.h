@@ -1,24 +1,23 @@
 #pragma once
 
 #include <GL/glew.h>
+#include <memory>
 #include <string>
 
 namespace ogl {
 
+namespace impl { class TextureImpl; }
+
 class Texture {
 public:
-	Texture() {}
-	Texture(const std::string& filename);
-	~Texture();
+    Texture(const std::string& filename);
+    ~Texture();
 
-	void load(const std::string filename);
-
-	void enable(GLenum TextureUnit);
-	void disable(GLenum TextureUnit);
+    void bind(GLenum TextureUnit);
+    void unbind(GLenum TextureUnit);
 
 private:
-	GLuint mTexture = -1;
-	GLenum mTarget = -1;
+    std::unique_ptr<impl::TextureImpl> mImpl;
 };
 
 } // namespace ogl

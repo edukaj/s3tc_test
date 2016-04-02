@@ -75,11 +75,11 @@ KeyState fromGLFWKeyState(int state)
 
 void GLFWKeyCallback(GLFWwindow*, int key, int, int action, int)
 {
-	auto k = fromGLFWKey(key);
-	auto state = fromGLFWKeyState(action);
+    auto k = fromGLFWKey(key);
+    auto state = fromGLFWKeyState(action);
 
 
-	g_Window->onKeyboardEvent(k, state);
+    g_Window->onKeyboardEvent(k, state);
 }
 
 

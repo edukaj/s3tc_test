@@ -76,7 +76,7 @@ void TextureTestWindow::onRenderSceneEvent()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	mTexture.enable(GL_TEXTURE0);
+	mTexture.bind(GL_TEXTURE0);
 	enableVertexArrayObject();
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, mPositions.size());
