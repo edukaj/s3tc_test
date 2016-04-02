@@ -22,10 +22,6 @@ public:
 
         const auto numMipMaps = mImage.get_num_mipmaps();
         const auto format = mImage.get_format();
-        const auto componentes = mImage.get_components();
-
-        glTexParameteri(target, GL_TEXTURE_BASE_LEVEL, 0 );
-        glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, numMipMaps);
 
         if (mImage.is_compressed())
         {
@@ -52,6 +48,10 @@ public:
                             );
             }
         }
+
+        glTexParameteri(target, GL_TEXTURE_BASE_LEVEL, 0 );
+        glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, numMipMaps);
+
     }
 
     ~TextureImpl()
