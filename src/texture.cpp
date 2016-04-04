@@ -78,7 +78,7 @@ public:
 			 << "compression type: " << utils::toString(format) << '\n'
 			 << "mipmaps: " << numMipMaps << '\n';
 
-		if(numMipMaps == 1)
+		if(numMipMaps == 0)
 		{
 			cout << "Generating mipmap..." << endl;
 			glGenerateMipmap(target);
