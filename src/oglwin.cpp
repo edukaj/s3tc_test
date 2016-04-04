@@ -75,11 +75,16 @@ KeyState fromGLFWKeyState(int state)
 
 void GLFWKeyCallback(GLFWwindow*, int key, int, int action, int)
 {
-    auto k = fromGLFWKey(key);
-    auto state = fromGLFWKeyState(action);
-
-
-    g_Window->onKeyboardEvent(k, state);
+	try
+	{
+		auto k = fromGLFWKey(key);
+		auto state = fromGLFWKeyState(action);
+		g_Window->onKeyboardEvent(k, state);
+	}
+	catch(const exception&)
+	{
+		return;
+	}
 }
 
 
@@ -91,13 +96,20 @@ void GLFWCursorPosCallback(GLFWwindow*, double x, double y)
 
 void GLFWMouseButtonCallback(GLFWwindow*, int button, int action, int)
 {
-	MouseButton mouseButton = fromGLFWMouseButton(button);
-	KeyState state = fromGLFWKeyState(action);
+	try
+	{
+		MouseButton mouseButton = fromGLFWMouseButton(button);
+		KeyState state = fromGLFWKeyState(action);
 
-	double x, y;
-	glfwGetCursorPos(g_GLFW_Window, &x, &y);
+		double x, y;
+		glfwGetCursorPos(g_GLFW_Window, &x, &y);
 
-	g_Window->onMouseEvent(mouseButton, state, x, y);
+		g_Window->onMouseEvent(mouseButton, state, x, y);
+	}
+	catch(const exception&)
+	{
+		return;
+	}
 }
 
 void GLFWResizeCallback(GLFWwindow*, int width, int height)
